@@ -18,8 +18,13 @@ export default async function ListSettingsPage(props: PageProps<'/list/[listId]/
     user ? pushSubscriptionsFor(user.id) : Promise.resolve([]),
   ])
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? 'http://localhost:3000'
+  // Prefer an explicit public origin, then Vercel's stable production domain,
+  // so invite links are correct without hardcoding the deployment host.
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
+  const vercelSiteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/^https?:\/\//, '')}`
+    : undefined
+  const siteUrl = configuredSiteUrl ?? vercelSiteUrl ?? 'http://localhost:3000'
 
   return (
     <ListSettings

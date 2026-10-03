@@ -19,7 +19,7 @@ export function PrioritySelect({ value, onChange }: Props) {
   return (
     <Select value={value} onValueChange={(next) => onChange(next as Priority)}>
       <SelectTrigger size="sm" className="w-auto gap-1.5" aria-label="Priority">
-        <SelectValue />
+        <SelectValue>{(selected) => PRIORITY_LABEL[selected as Priority]}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         {(['high', 'medium', 'low'] as Priority[]).map((p) => (

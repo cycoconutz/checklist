@@ -77,7 +77,7 @@ export function ListToolbar({
       <Select value={sort} onValueChange={(v) => onSortChange(v as SortMode)}>
         <SelectTrigger size="sm" className="w-auto gap-1.5" aria-label="Sort by">
           <ArrowUpDown aria-hidden className="size-3.5" />
-          <SelectValue />
+          <SelectValue>{(selected) => SORT_LABELS[selected as SortMode]}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {(Object.keys(SORT_LABELS) as SortMode[]).map((mode) => (
@@ -169,7 +169,29 @@ export function ListToolbar({
               <legend className="text-sm font-medium">Assignee</legend>
               <Select value={assignee} onValueChange={onAssigneeChange}>
                 <SelectTrigger size="sm" className="w-full" aria-label="Filter by assignee">
-                  <SelectValue />
+                  <SelectValue placeholder="Anyone">
+                    {(selected) => {
+                      if (selected === ME) return 'Assigned to me'
+                      if (selected === UNASSIGNED) return 'Unassigned'
+                      const member = members.find((m) => m.userId === selected)
+                      if (!member) return 'Anyone'
+                      return (
+                        <span className="flex items-center gap-2">
+                          <Avatar
+                            className="size-4"
+                            style={{ backgroundColor: member.avatarColor }}
+                          >
+                            <AvatarFallback className="text-[8px] text-white">
+                              {initials(member.displayName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          {member.userId === currentUserId
+                            ? `${member.displayName} (you)`
+                            : member.displayName}
+                        </span>
+                      )
+                    }}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={ANYONE}>Anyone</SelectItem>
